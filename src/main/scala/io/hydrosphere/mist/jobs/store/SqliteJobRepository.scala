@@ -8,7 +8,7 @@ import io.hydrosphere.mist.utils.TypeAlias.{JobParameters, JobResponseOrError}
 import io.hydrosphere.mist.utils.json.JobDetailsJsonSerialization
 import org.flywaydb.core.Flyway
 import spray.json.{pimpAny, pimpString}
-import slick.driver.SQLiteDriver.api._
+import slick.jdbc.SQLiteProfile.api._
 import slick.lifted.ProvenShape
 
 import scala.concurrent.Await
@@ -16,10 +16,10 @@ import scala.concurrent.duration._
 import scala.language.{implicitConversions, postfixOps}
 
 
-object SqliteJobRepository extends JobRepository with JobDetailsJsonSerialization with Logger {
+class SqliteJobRepository(filePath: String) extends JobRepository with JobDetailsJsonSerialization with Logger {
 
   private val db = {
-    val jdbcPath = s"jdbc:sqlite:${MistConfig.History.filePath}"
+    val jdbcPath = s"jdbc:sqlite:$filePath"
     val flyway = new Flyway ()
     flyway.setLocations("/db/migrations")
     flyway.setDataSource(jdbcPath, null, null)
@@ -138,3 +138,5 @@ object SqliteJobRepository extends JobRepository with JobDetailsJsonSerializatio
     run(jobs.filter(_.status inSetBind statuses).result).toList
   }
 }
+
+object SqliteJobRepository extends SqliteJobRepository(MistConfig.History.filePath)

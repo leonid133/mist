@@ -3,7 +3,7 @@ package io.hydrosphere.mist.jobs.store
 import io.hydrosphere.mist.jobs.JobDetails
 import io.hydrosphere.mist.jobs.JobDetails.Status
 
-private[mist] object InMemoryJobRepository extends JobRepository {
+private[mist] class InMemoryJobRepository extends JobRepository {
 
   private val _collection = scala.collection.mutable.Map[String, JobDetails]()
 
@@ -36,4 +36,7 @@ private[mist] object InMemoryJobRepository extends JobRepository {
       job: JobDetails => statuses contains job.status
     }
   }
+
 }
+
+object InMemoryJobRepository extends InMemoryJobRepository

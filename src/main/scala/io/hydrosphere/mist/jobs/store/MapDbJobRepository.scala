@@ -8,11 +8,11 @@ import org.mapdb.{DBMaker, Serializer}
 import io.hydrosphere.mist.utils.json.JobDetailsJsonSerialization
 import spray.json._
 
-
-private[mist] object MapDbJobRepository extends JobRepository with JobDetailsJsonSerialization with Logger {
+private[mist] class MapDbJobRepository(filePath: String) extends JobRepository
+  with JobDetailsJsonSerialization with Logger {
   // Db
   private lazy val db = DBMaker
-    .fileDB(MistConfig.History.filePath)
+    .fileDB(filePath)
     .fileLockDisable
     .closeOnJvmShutdown
     .checksumHeaderBypass()
@@ -24,70 +24,29 @@ private[mist] object MapDbJobRepository extends JobRepository with JobDetailsJso
     .createOrOpen
   
   private def add(jobDetails: JobDetails): Unit = {
-    try {
-      val w_job = jobDetails.toJson.compactPrint.getBytes
-      map.put(jobDetails.jobId, w_job)
-      logger.info(s"${jobDetails.jobId} saved in MapDb")
-    } catch {
-      case e: Exception => logger.error(e.getMessage, e)
-    }
+    map.put(jobDetails.jobId, serialize(jobDetails))
+    logger.info(s"${jobDetails.jobId} saved in MapDb")
   }
 
   override def remove(jobId: String): Unit = {
-    try {
-      map.remove(jobId)
-      logger.info(s"$jobId removed from MapDb")
-    } catch {
-      case e: Exception => logger.error(e.getMessage, e)
-    }
+    map.remove(jobId)
+    logger.info(s"$jobId removed from MapDb")
   }
 
   private def getAll: List[JobDetails] = {
-    try {
-      val values = map.getKeys.toArray.toList.map { (key) =>
-        logger.info(key.toString)
-        new String(map.get(key.toString)).parseJson.convertTo[JobDetails]
-      }
-      logger.info(s"${values.length} get from MapDb")
-      values
-    }
-    catch {
-      case e: Exception =>
-        logger.error(e.getMessage, e)
-        List.empty[JobDetails]
-    }
+    map.getKeys.toArray().toList.flatMap(key => get(key.toString))
   }
 
   override def get(jobId: String): Option[JobDetails] = {
-    try {
-      Some(new String(map.get(jobId)).parseJson.convertTo[JobDetails])
-    }
-    catch {
-      case e: Exception =>
-        logger.error(e.getMessage, e)
-        None
-    }
+    Option(map.get(jobId)).map(deserialize)
   }
 
-  override def size: Long ={
-    try{
-      val keys = map.getKeys.toArray()
-      keys.length.toLong
-    }
-    catch {
-      case e: Exception =>
-        logger.error(e.getMessage, e)
-        0L
-    }
+  override def size: Long = {
+    map.getSize
   }
 
  override def clear(): Unit = {
-   try {
-     map.clear()
-     logger.info("MpDb cleaned", size)
-   } catch {
-     case e: Exception => logger.error(e.getMessage, e)
-   }
+   map.clear()
  }
 
   override def update(jobDetails: JobDetails): Unit = {
@@ -99,4 +58,12 @@ private[mist] object MapDbJobRepository extends JobRepository with JobDetailsJso
       job: JobDetails => statuses contains job.status
     }
   }
+
+  private def serialize(jobDetails: JobDetails): Array[Byte] =
+    jobDetails.toJson.compactPrint.getBytes
+
+  private def deserialize(bytes: Array[Byte]): JobDetails =
+    new String(bytes).parseJson.convertTo[JobDetails]
 }
+
+object MapDbJobRepository extends MapDbJobRepository(MistConfig.History.filePath)

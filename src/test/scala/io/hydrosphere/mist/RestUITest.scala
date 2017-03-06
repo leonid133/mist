@@ -8,7 +8,6 @@ import akka.http.scaladsl.model._
 import akka.stream.ActorMaterializer
 import akka.testkit.TestKit
 import io.hydrosphere.mist.utils.json.JobConfigurationJsonSerialization
-import io.hydrosphere.mist.Constants
 import org.scalatest.concurrent.PatienceConfiguration.Timeout
 import org.scalatest.concurrent.{Eventually, ScalaFutures}
 import org.scalatest.{BeforeAndAfterAll, WordSpecLike, _}
