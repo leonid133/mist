@@ -12,7 +12,8 @@ import org.json4s.DefaultFormats
 import org.json4s.native.Json
 import spray.json.{DeserializationException, pimpString}
 
-import scala.concurrent.Await
+import scala.concurrent.{ExecutionContext, ExecutionContextExecutorService, Await, Future}
+//import java.util.concurrent.Executors.newFixedThreadPool
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.{Duration, FiniteDuration}
 import scala.util.{Failure, Success}
@@ -46,7 +47,7 @@ private[mist] class MQTTServiceActor extends Actor with MQTTPubSubActor with Job
 
       logger.info("Receiving Data, Topic : %s, Message : %s".format(MistConfig.MQTT.publishTopic, stringMessage))
 
-      val jobResult = try {
+      try {
         val json = stringMessage.parseJson
         // map request into JobConfiguration
         // TODO: build configuration with builder
@@ -82,22 +83,24 @@ private[mist] class MQTTServiceActor extends Actor with MQTTPubSubActor with Job
           val future = workerManagerActor.ask(jobCreatingRequest)(timeout = FiniteDuration(timeDuration.toNanos, TimeUnit.NANOSECONDS)) recover {
             case error: Throwable => Right(error.toString)
           }
-          val result = Await.ready(future, Duration.Inf).value.get
-          val jobResultEither = result match {
-            case Success(r) => r
-            case Failure(r) => r
-          }
-
-          jobResultEither match {
-            case Left(jobResult: Map[String, Any]) =>
-              JobResult(success = true, payload = jobResult, request = jobCreatingRequest, errors = List.empty)
-            case Right(error: String) =>
-              wrapError(error, jobCreatingRequest)
+          
+          future onComplete {
+            case Success(result) => result match {
+              case Left(jobResult: Map[String, Any]) =>
+                val jsonString = Json(DefaultFormats).write(JobResult(success = true, payload = jobResult, request = jobCreatingRequest, errors = List.empty))
+                pubsub ! new MQTTPubSub.Publish(jsonString.getBytes("utf-8"))
+                
+              case Right(error: String) =>
+                val jsonString = Json(DefaultFormats).write(wrapError(error, jobCreatingRequest))
+                pubsub ! new MQTTPubSub.Publish(jsonString.getBytes("utf-8"))
+            }
+            case Failure(t) => throw t
           }
         }
         else {
           workerManagerActor ! jobCreatingRequest
-          JobResult(success = true, payload = Map("result" -> "Infinity Job Started"), request = jobCreatingRequest, errors = List.empty)
+          val jsonString = Json(DefaultFormats).write(JobResult(success = true, payload = Map("result" -> "Infinity Job Started"), request = jobCreatingRequest, errors = List.empty))
+          pubsub ! new MQTTPubSub.Publish(jsonString.getBytes("utf-8"))
         }
 
       } catch {
@@ -113,11 +116,6 @@ private[mist] class MQTTServiceActor extends Actor with MQTTPubSubActor with Job
         case e: Throwable =>
           logger.error(e.toString)
           null
-      }
-
-      if (jobResult != null) {
-        val jsonString = Json(DefaultFormats).write(jobResult)
-        pubsub ! new MQTTPubSub.Publish(jsonString.getBytes("utf-8"))
       }
 
   }

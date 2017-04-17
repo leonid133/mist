@@ -10,6 +10,7 @@ trait HiveSupport extends SessionSupport {
 
   override private[mist] def setup(sc: ContextWrapper): Unit = {
     super.setup(sc)
+    sc.withHive()
     _session = sc.sparkSession
   }
 
