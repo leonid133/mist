@@ -13,17 +13,15 @@ private[mist] trait ContextWrapper extends Logger{
 
   private val jars: ArrayBuffer[String] = ArrayBuffer.empty[String]
 
-  private var isHive = false
+  private var isHive = true
 
   lazy val sparkSession: SparkSession = {
-     var builder = SparkSession
+     SparkSession
       .builder()
       .appName(context.appName)
       .config(context.getConf)
-     if (isHive) {
-       builder = builder.enableHiveSupport()
-     }
-     builder.getOrCreate()
+      .enableHiveSupport()
+      .getOrCreate()
   }
 
   def withHive(): ContextWrapper = {

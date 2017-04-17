@@ -21,7 +21,7 @@ import scala.concurrent._
 import scala.concurrent.duration.FiniteDuration
 import scala.language.postfixOps
 import scala.sys.process._
-import scala.util.{Failure, Success}
+import scala.util.{Failure, Random, Success}
 
 /** Manages context repository */
 private[mist] class ClusterManager extends Actor with Logger {
@@ -30,7 +30,8 @@ private[mist] class ClusterManager extends Actor with Logger {
 
   private val workers = WorkerCollection()
 
-  def startNewWorkerWithName(name: String): Unit = {
+  def startNewWorkerWithName(name: String, externalOptions: Option[String] = None): Unit = {
+    
     if (!workers.containsName(name)) {
       if (MistConfig.Settings.singleJVMMode) {
         Worker.main(Array(name))
@@ -52,7 +53,7 @@ private[mist] class ClusterManager extends Actor with Logger {
                   "--namespace", name,
                   "--config", configFile.toString,
                   "--jar", jarPath.toString,
-                  "--run-options", runOptions)
+                  "--run-options", runOptions + externalOptions.getOrElse(""))
                 cmd !
               case "docker" =>
                 val cmd: Seq[String] = Seq(
@@ -65,7 +66,7 @@ private[mist] class ClusterManager extends Actor with Logger {
                   "--namespace", name,
                   "--config", configFile.toString,
                   "--jar", jarPath.toString,
-                  "--run-options", runOptions)
+                  "--run-options", runOptions + externalOptions.getOrElse(""))
                 cmd !
               case "manual" =>
                 Process(
@@ -74,7 +75,7 @@ private[mist] class ClusterManager extends Actor with Logger {
                     "MIST_WORKER_NAMESPACE" -> name,
                     "MIST_WORKER_CONFIG" -> configFile.toString,
                     "MIST_WORKER_JAR_PATH" -> jarPath.toString,
-                    "MIST_WORKER_RUN_OPTIONS" -> runOptions
+                    "MIST_WORKER_RUN_OPTIONS" -> (runOptions  +  externalOptions.getOrElse("")).toString
                 ).!
             }
           }
@@ -249,9 +250,8 @@ private[mist] class ClusterManager extends Actor with Logger {
 
     case jobRequest: FullJobConfiguration =>
       val originalSender = sender
-      startNewWorkerWithName(jobRequest.namespace)
-
       MistConfig.reload()
+      startNewWorkerWithName(jobRequest.namespace, Option(","+jobRequest.path))
 
       workers.registerCallbackForName(jobRequest.namespace, {
         case WorkerLink(uid, name, address, false) =>
