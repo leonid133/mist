@@ -1,0 +1,5 @@
+#!/bin/sh
+IMAGE_TAG="mist-0.0.1"
+IMAGE="docker.jiwiredev.com/nined/pca-mist:$IMAGE_TAG"
+docker rm -fv pca-debug-mist
+docker run -d --net=host --name pca-debug-mist -v /var/run/docker.sock:/var/run/docker.sock -v $PWD:/usr/share/mist $IMAGE mist

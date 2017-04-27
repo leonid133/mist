@@ -9,7 +9,8 @@ elif [ "$1" = 'mist' ]; then
   if [ -e "configs/user.conf" ]; then
     cp -f configs/user.conf configs/docker.conf
   fi
-  export IP=`ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'`
+  #export IP=`ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p' | head -n 1`
+  export IP=`ifconfig eth0 2>/dev/null|awk '/inet addr:/ {print $2}'|sed 's/addr://'`
   echo "$IP    master" >> /etc/hosts
   sed -i "s/leader/$IP/" configs/docker.conf
   ./bin/mist start master --config configs/docker.conf
@@ -22,7 +23,6 @@ elif [ "$1" = 'worker' ]; then
   ./bin/mist start worker --runner local --namespace $2 --config configs/docker.conf $4
 elif [ "$1" = 'dev' ]; then
   ./sbt/sbt -DsparkVersion=${SPARK_VERSION} assembly
-  ./sbt/sbt -DsparkVersion=${SPARK_VERSION} "project examples" package
   ./bin/mist start master --config configs/docker.conf
 else
   exec "$@"
