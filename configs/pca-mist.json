@@ -1,0 +1,65 @@
+{
+    "owners": ["lblokhin@ninthdecimal.com"],
+    "requestType": "WORKER",
+    "id": "dev-pca-mist",
+    "requiredSlaveAttributes":
+    {
+        "cluster": "compute_2_0",
+        "maprfs": "true"
+    },
+    "deploy":
+    {
+        "user": "pca",
+        "arguments":
+        [
+            "mist"
+        ],
+        "containerInfo":
+        {
+            "type": "DOCKER",
+            "docker":
+            {
+                "forcePullImage": false,
+                "image": "docker.jiwiredev.com/nined/pca-mist:mist-0.0.10",
+                "network": "HOST",
+                "parameters": {"ipc": "host"},
+                "dockerParameters": [{"key": "ipc", "value": "host"}],
+                "privileged": true
+            },
+            "volumes":
+            [
+                {
+                    "containerPath": "/nethome/lblokhin/jars",
+                    "hostPath": "/nethome/lblokhin/jars",
+                    "mode": "RO"
+                },
+                {
+                    "containerPath": "/nethome/lblokhin/pca/target/scala-2.11",
+                    "hostPath": "/nethome/lblokhin/pca/target/scala-2.11",
+                    "mode": "RO"
+                }
+            ]
+        },
+        "resources":
+        {
+            "cpus": 4,
+            "memoryMb": 9100,
+            "numPorts": 0
+        },
+        "env":
+        {
+            "OPENV": "indy",
+            "SKIP_MAPR_CONFD": "1",
+            "JOIN_AD": "0",
+            "HOMEDIRS": "0",
+            "USERNAME": "pca",
+            "BROKER_URL": "amqp://guest:guest@rabbitmq.9dev.io:5672/pca-dev",
+            "CELERY_TRACK_STARTED": "1",
+            "CELERY_SEND_EVENTS": "1",
+            "CELERY_SEND_TASK_SENT_EVENT": "1",
+            "SPARK_HOME": "/opt/spark/current",
+            "MIST_HOME": "/usr/share/mist",
+            "SPARK_VERSION": "2.1.0"
+        }
+    }
+}

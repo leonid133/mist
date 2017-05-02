@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+export MIST_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
+
+runner="local"
+external_id=""
+run_options=""
+parameters="{}"
+
+cmd=$1
+
+shift
+while [[ $# > 1 ]]
+do
+  key="$1"
+
+  case ${key} in
+    --namespace)
+      namespace="$2"
+      shift
+      ;;
+
+    --run-options)
+      run_options="$2"
+      shift
+      ;;
+
+  esac
+
+shift
+done
+
+if [ "${cmd}" == 'start' ]
+then
+  # запуск воркера через сингулярити
+  ~/.local/bin/nd-singularity -s singularity-21.jiwiredev.com deploy -f ${MIST_HOME}/configs/pca-mist-worker.json --retry=99
+elif [ "${cmd}" == 'stop' ]
+then
+  # остановка этого воркера 
+  echo "stop"
+fi
