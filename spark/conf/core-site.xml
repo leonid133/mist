@@ -1,0 +1,13 @@
+<configuration>
+  <property>
+    <name>fs.tachyon.impl</name>
+    <value>tachyon.hadoop.TFS</value>
+  </property>
+  <property>
+    
+  </property>
+  <property>
+    <name>fs.permissions.umask-mode</name><value>002</value>
+  </property>
+
+</configuration>

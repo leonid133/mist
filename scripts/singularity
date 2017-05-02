@@ -2,7 +2,7 @@
 
 export MIST_HOME="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../" && pwd )"
 
-runner="docker"
+runner="local"
 external_id=""
 run_options=""
 parameters="{}"
@@ -33,7 +33,7 @@ done
 if [ "${cmd}" == 'start' ]
 then
   # запуск воркера через сингулярити
-  ~/.local/bin/nd-singularity -s singularity-21.jiwiredev.com deploy -f ${MIST_HOME}/configs/pca-mist.json --retry=99
+  ~/.local/bin/nd-singularity -s singularity-21.jiwiredev.com deploy -f ${MIST_HOME}/configs/pca-mist-worker.json --retry=99
 elif [ "${cmd}" == 'stop' ]
 then
   # остановка этого воркера 
