@@ -2,8 +2,7 @@ repo := docker.jiwiredev.com
 docker-build-opt := --pull --force-rm
 name := pca-mist
 
-tag := mist-0.0.10
-pca-mist-ver := 0.10.0
+tag := mist-0.0.19
 
 build:
 	docker build ${docker-build-opt} -t "${repo}/nined/${name}:${tag}" \

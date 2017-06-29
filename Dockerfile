@@ -1,5 +1,5 @@
 FROM docker.jiwiredev.com/nined/spark-box:latest
-MAINTAINER fi@ninthdecimal.com
+MAINTAINER lblokhin@ninthdecimal.com
 
 ENV MIST_HOME=/usr/share/mist \
     SPARK_VERSION=2.1.0 \
@@ -20,12 +20,11 @@ RUN echo "Update 2017-04-24" \
     libpq-dev \
     libboost-python-dev \
     supervisor \
+ && pip install -i http://pypi.jiwiredev.com/simple --trusted-host pypi.jiwiredev.com --user nd-singularity \
  && apt-get -y autoremove \
  && apt-get -y clean all \
  && apt-get -y autoclean all \
  && rm -fr /tmp/* /var/tmp/*
- 
-RUN pip install http://pypi.jiwiredev.com/packages/nd-singularity-0.6.4.tar.gz
 
 RUN wget http://jenkins-01.jiwiredev.com/job/spark-distribution/35/artifact/release/spark-2.0.3-20161205/spark-2.0.3-SNAPSHOT-bin-2.7.0-mapr-1506.tgz \
     && tar xzf spark-2.0.3-SNAPSHOT-bin-2.7.0-mapr-1506.tgz \

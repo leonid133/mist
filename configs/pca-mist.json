@@ -20,7 +20,7 @@
             "docker":
             {
                 "forcePullImage": false,
-                "image": "docker.jiwiredev.com/nined/pca-mist:mist-0.0.10",
+                "image": "docker.jiwiredev.com/nined/pca-mist:mist-0.0.19",
                 "network": "HOST",
                 "parameters": {"ipc": "host"},
                 "dockerParameters": [{"key": "ipc", "value": "host"}],
@@ -37,13 +37,18 @@
                     "containerPath": "/nethome/lblokhin/pca/target/scala-2.11",
                     "hostPath": "/nethome/lblokhin/pca/target/scala-2.11",
                     "mode": "RO"
+                },
+                {
+                    "containerPath": "/usr/share/mist/ext_configs",
+                    "hostPath": "/nethome/lblokhin/git/mist/configs",
+                    "mode": "RW"
                 }
             ]
         },
         "resources":
         {
             "cpus": 4,
-            "memoryMb": 9100,
+            "memoryMb": 4100,
             "numPorts": 0
         },
         "env":

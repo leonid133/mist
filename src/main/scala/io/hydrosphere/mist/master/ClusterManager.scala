@@ -107,6 +107,7 @@ private[mist] class ClusterManager extends Actor with Logger {
       workers -= WorkerLink(uid, name, address, blackSpot)
       cluster.down(AddressFromURIString(address))
     }
+    runCmdStopByName(name)
   }
 
   def removeWorkerByAddress(address: String): Unit = {
@@ -130,6 +131,23 @@ private[mist] class ClusterManager extends Actor with Logger {
         removeWorkerByUID(uid)
       }
     } else { startNewWorkerWithName(name) }
+  }
+  
+  def runCmdStopByName(name: String): Unit = {
+    if (MistConfig.Workers.cmdStop.nonEmpty && name.nonEmpty) {
+      new Thread {
+        override def run(): Unit = {
+          MistConfig.Workers.runner match {
+            case "manual" =>
+              Process(
+                Seq("bash", "-c", MistConfig.Workers.cmdStop.get),
+                None,
+                "MIST_WORKER_NAMESPACE" -> name
+              ).!
+          }
+        }
+      }.start()
+    }
   }
 
   override def receive: Receive = {
