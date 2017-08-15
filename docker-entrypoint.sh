@@ -4,23 +4,18 @@ set -e
 cd ${MIST_HOME}
 
 if [ "$1" = 'mist' ]; then
-  export IP=`ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'`
-  echo "$IP    master" >> /etc/hosts
+  export IP=`ifconfig eth0 2>/dev/null|awk '/inet addr:/ {print $2}'|sed 's/addr://'`
 
   export JAVA_OPTS="$JAVA_OPTS -Dmist.cluster.host=$IP"
   shift
-  exec ./bin/mist-master start --debug true $@
+  exec ./bin/mist-master start --config /usr/share/external_configs/pca-mist.conf --debug true $@
 elif [ "$1" = 'worker' ]; then 
-  if [ ! -z $5 ]; then
-    echo $5 | base64 -d  > configs/default.conf
-  fi
-  export IP=`getent hosts master | awk '{ print $1 }'`
-  export MYIP=`ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p'`
+  export IP=`getent hosts dev-pca-mist.singularity.k.9dev.io | awk '{ print $1 }'`
+  export MYIP=`ifconfig eth0 2>/dev/null|awk '/inet addr:/ {print $2}'|sed 's/addr://'`
 
   JAVA_ARGS="-Dmist.akka.cluster.seed-nodes.0=akka.tcp://mist@$IP:2551"
   JAVA_ARGS="$JAVA_ARGS -Dmist.akka.remote.netty.tcp.hostname=$MYIP"
   JAVA_ARGS="$JAVA_ARGS -Dmist.akka.remote.netty.tcp.bind-hostname=$MYIP"
-  exec ./bin/mist-worker --runner local --name $2 --context $3 --java-args "$JAVA_ARGS" --mode $4 --run-options $6
-else
-  exec "$@"
+  exec ./bin/mist-worker --runner local --master ${IP} --name ${MIST_WORKER_NAMESPACE} --context-name ${MIST_WORKER_CONTEXT} --java-args "$JAVA_ARGS" --mode ${MIST_WORKER_MODE}
+  
 fi

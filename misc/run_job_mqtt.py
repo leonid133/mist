@@ -82,7 +82,7 @@ class MqttJobRunner:
 
 
 
-runner = MqttJobRunner("localhost", 1883, "in", "out")
+runner = MqttJobRunner("dev-pca-mist.singularity.k.9dev.io", 1883, "in", "out")
 runSettings = { "mode": { "type": "shared" }} 
 #runSettings = { "mode": { "type": "exclusive", "id": "yoyoyoyo" }} 
 
