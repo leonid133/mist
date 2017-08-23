@@ -157,28 +157,18 @@ lazy val mist = project.in(file("."))
     stageDirectory := target.value / s"mist-${version.value}-${sparkVersion.value}",
     stageActions := {
       val sparkMajor = if (sparkVersion.value.startsWith("1.")) "1" else "2"
-      val routes = {
-        CpFile(s"configs/router-examples-spark$sparkMajor.conf")
-          .as("router.conf")
-          .to("configs")
-      }
+      
       Seq(
         CpFile("bin"),
         MkDir("configs"),
-        CpFile("configs/default.conf").to("configs"),
         CpFile("configs/logging").to("configs"),
-        routes,
         CpFile("examples/examples-python").as("examples-python"),
         CpFile(assembly.value).as("mist.jar"),
         CpFile(sbt.Keys.`package`.in(currentExamples, Compile).value)
           .as(s"mist-examples-spark$sparkMajor.jar"),
         CpFile(Ui.ui.value).as("ui")
       )
-    },
-    stageActions in basicStage +=
-      CpFile("configs/default.conf").to("configs"),
-    stageActions in dockerStage +=
-      CpFile("configs/docker.conf").as("default.conf").to("configs")
+    }
 
   )
 

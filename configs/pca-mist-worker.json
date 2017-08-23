@@ -59,7 +59,7 @@
             "CELERY_SEND_EVENTS": "1",
             "CELERY_SEND_TASK_SENT_EVENT": "1",
             "SPARK_HOME": "/opt/spark/current",
-            "MIST_HOME": "/usr/share/mist/target/mist-0.12.3-2.1.0",
+            "MIST_HOME": "/usr/share/mist/target/mist-0.13.1-2.1.0",
             "SPARK_VERSION": "2.1.0"
         }
     }

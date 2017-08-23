@@ -82,9 +82,9 @@ class MqttJobRunner:
 
 
 
-runner = MqttJobRunner("dev-pca-mist.singularity.k.9dev.io", 1883, "in", "out")
-runSettings = { "mode": { "type": "shared" }} 
-#runSettings = { "mode": { "type": "exclusive", "id": "yoyoyoyo" }} 
+runner = MqttJobRunner("rabbitmq.9dev.io", 1883, "pca_mist_sub", "pca_mist_pub")
+#runSettings = { "mode": { "type": "shared" }} 
+runSettings = { "mode": { "type": "exclusive", "id": "yoyoyoyo" }} 
 
 result = runner.runJob("simple-context", { "numbers": [1,2,3,4,5] }, runSettings)
 print("Job result is:" + json.dumps(result))
