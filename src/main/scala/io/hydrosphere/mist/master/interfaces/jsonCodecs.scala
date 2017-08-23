@@ -7,7 +7,7 @@ import io.hydrosphere.mist.api.logging.MistLogging.LogEvent
 import io.hydrosphere.mist.jobs.JobDetails.{Source, Status}
 import io.hydrosphere.mist.jobs.{Action, JobDetails, JobResult}
 import io.hydrosphere.mist.master.WorkerLink
-import io.hydrosphere.mist.master.interfaces.http.{HttpEndpointInfoV2, HttpJobArg, HttpJobInfo}
+import io.hydrosphere.mist.master.interfaces.http.{ContextCreateRequest, HttpEndpointInfoV2, HttpJobArg, HttpJobInfo}
 import io.hydrosphere.mist.master.models._
 import io.hydrosphere.mist.utils.TypeAlias.JobResponseOrError
 import spray.json._
@@ -112,13 +112,13 @@ trait JsonCodecs extends SprayJsonSupport
     rootFormat(lazyFormat(jsonFormat(HttpJobArg.apply, "type", "args")))
 
   implicit val httpJobInfoF = rootFormat(lazyFormat(jsonFormat(HttpJobInfo.apply,
-      "name", "execute", "train", "serve",
+      "name", "execute", "serve",
       "isHiveJob", "isSqlJob","isStreamingJob", "isMLJob", "isPython")))
 
   implicit val httpJobInfoV2F = rootFormat(lazyFormat(jsonFormat(HttpEndpointInfoV2.apply,
     "name", "lang", "execute", "tags", "path", "className", "defaultContext")))
 
-  implicit val workerLinkF = jsonFormat2(WorkerLink)
+  implicit val workerLinkF = jsonFormat3(WorkerLink)
 
   implicit val jobStartResponseF = jsonFormat1(JobStartResponse)
 
@@ -187,7 +187,9 @@ trait JsonCodecs extends SprayJsonSupport
     }
   }
 
-  implicit val contextConfigF = jsonFormat7(ContextConfig.apply)
+  implicit val contextConfigF = jsonFormat8(ContextConfig.apply)
+
+  implicit val contextCreateRequestF = jsonFormat8(ContextCreateRequest.apply)
 
   implicit val updateEventF = new JsonFormat[SystemEvent] {
 

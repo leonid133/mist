@@ -1,10 +1,10 @@
 package io.hydrosphere.mist.master.interfaces.http
 
+import akka.http.scaladsl.Http
 import akka.http.scaladsl.marshalling.{ToEntityMarshaller, ToResponseMarshallable}
-import akka.http.scaladsl.model.{StatusCodes, StatusCode, HttpResponse}
+import akka.http.scaladsl.model.{HttpEntity, HttpResponse, StatusCode, StatusCodes}
 import akka.http.scaladsl.server.Directives
 import akka.http.scaladsl.server.directives.ParameterDirectives
-
 import io.hydrosphere.mist.jobs.JobDetails
 import io.hydrosphere.mist.jobs.JobDetails.Source
 import io.hydrosphere.mist.master.data.ContextsStorage
@@ -22,16 +22,11 @@ case class JobRunQueryParams(
   force: Boolean,
   externalId: Option[String],
   context: Option[String],
-  mode: Option[String],
   workerId: Option[String]
 ) {
 
   def buildRunSettings(): RunSettings = {
-    val runMode = mode.flatMap(RunMode.fromString).getOrElse(RunMode.Shared) match {
-      case u: RunMode.ExclusiveContext => u.copy(workerId)
-      case x => x
-    }
-    RunSettings(context, runMode)
+    RunSettings(context, workerId)
   }
 }
 
@@ -48,7 +43,6 @@ object HttpV2Base {
   import Directives._
   import JsonCodecs._
   import akka.http.scaladsl.model.StatusCodes
-  import ParameterDirectives.ParamMagnet
   import akka.http.scaladsl.server._
 
   def completeU(resource: Future[Unit]): Route =
@@ -61,7 +55,6 @@ object HttpV2Base {
       'force ? (false),
       'externalId ?,
       'context ?,
-      'mode ?,
       'workerId ?
     ).as(JobRunQueryParams)
 
@@ -224,7 +217,15 @@ object HttpV2Routes {
     } ~
     path( root / "jobs" / Segment / "logs") { jobId =>
       get {
-        getFromFile(master.logStorageMappings.pathFor(jobId).toFile)
+        onSuccess(master.jobService.jobStatusById(jobId)) {
+          case Some(_) =>
+            master.logStorageMappings.pathFor(jobId).toFile match {
+              case file if file.exists => getFromFile(file)
+              case _ => complete { HttpResponse(StatusCodes.OK, entity=HttpEntity.Empty) }
+            }
+          case None =>
+            complete { HttpResponse(StatusCodes.NotFound, entity=s"Job $jobId not found")}
+        }
       }
     } ~
     path( root / "jobs" / Segment ) { jobId =>
@@ -242,9 +243,12 @@ object HttpV2Routes {
       get { completeOpt(contexts.get(id)) }
     } ~
     path ( root / "contexts" ) {
-      post { entity(as[ContextConfig]) { context =>
+      post { entity(as[ContextCreateRequest]) { context =>
         onSuccess(contexts.get(context.name)) {
-          case None => complete { contexts.update(context) }
+          case None => complete {
+            val config = context.toContextWithFallback(contexts.defaultConfig)
+            contexts.update(config)
+          }
           case Some(_) =>
             val rsp = HttpResponse(StatusCodes.Conflict, entity = s"Context with name ${context.name} already exists")
             complete(rsp)
