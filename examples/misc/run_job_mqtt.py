@@ -55,7 +55,7 @@ class MqttJobRunner:
 
 
 
-    def runJob(self, endpoint, params, runSettings = { "mode": { "type": "shared" }}):
+    def runJob(self, endpoint, params, runSettings = { "workerId": "default" }):
         self.externalId = str(uuid.uuid4())
         req = {
           "endpointId": endpoint,
@@ -83,8 +83,8 @@ class MqttJobRunner:
 
 
 runner = MqttJobRunner("rabbitmq.9dev.io", 1883, "pca_mist_sub", "pca_mist_pub")
-#runSettings = { "mode": { "type": "shared" }} 
-runSettings = { "mode": { "type": "exclusive", "id": "yoyoyoyo" }} 
+
+runSettings = { "workerId": "yoyoyoyo" }
 
 result = runner.runJob("simple-context", { "numbers": [1,2,3,4,5] }, runSettings)
 print("Job result is:" + json.dumps(result))

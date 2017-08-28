@@ -11,6 +11,7 @@ ASSEMBLY_JAR=$MIST_HOME/mist.jar
 WORKER_NAME=""
 RUNNER="local"
 MODE="shared"
+JAVA_ARGS=""
 
 ORIGIN_ARGS=$@
 

@@ -25,12 +25,14 @@ done
 
 if [ "${cmd}" == 'start' ]
 then
-  hash=$(echo -n ${namespace} | md5sum | awk '{print $1}') 
+  #hash=$(echo -n ${namespace} | md5sum | awk '{print $1}') 
+  hash=${namespace}
   python ${MIST_HOME}/scripts/create-singularity-json.py ${hash}
   ~/.local/bin/nd-singularity -s singularity-21.jiwiredev.com deploy -f ${MIST_HOME}/configs/pca-mist-worker-${hash}.json -r --retry=99
 elif [ "${cmd}" == 'stop' ]
 then
   echo "stop"
-  hash=$(echo -n ${namespace} | md5sum | awk '{print $1}') 
+  #hash=$(echo -n ${namespace} | md5sum | awk '{print $1}') 
+  hash=${namespace}
   curl -X DELETE singularity-21.jiwiredev.com/singularity/api/requests/request/dev-pca-mist-worker-${hash}
 fi
