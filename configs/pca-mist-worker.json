@@ -1,6 +1,6 @@
 {
     "owners": ["lblokhin@ninthdecimal.com"],
-    "requestType": "RUN_ONCE",
+    "requestType": "WORKER",
     "id": "dev-pca-mist-worker",
     "requiredSlaveAttributes":
     {

@@ -82,7 +82,7 @@ class MasterService(
       _             <- validate(fullInfo.info, req.parameters, action)
       runMode       =  selectRunMode(context, req.workerId, fullInfo)
       executionInfo <- jobService.startJob(JobStartRequest(
-        id = UUID.randomUUID().toString,
+        id = UUID.randomUUID().node().toString,
         endpoint = endpoint,
         context = context,
         parameters = req.parameters,

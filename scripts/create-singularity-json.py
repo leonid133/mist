@@ -12,8 +12,7 @@ def exclusive(singularity_config, hash_id):
     singularity_config['deploy']['env']['MIST_WORKER_RUN_OPTIONS'] = os.environ['MIST_WORKER_RUN_OPTIONS']
 
     singularity_config['id'] = singularity_config['id'] + '-' + hash_id 
-    singularity_config['requestType'] = 'RUN_ONCE'
-
+    
     return singularity_config
     
 
