@@ -1,14 +1,22 @@
 {
     "method":{
-     "name": "Create_Ref_Tables" 
+     "name": "Create_Ref_Tables, filter_CA_events_task, filter_IDA_task, filter_events_task, write_new_events, filter_ref_tables, PCA_run_task, output_taskAll" 
     },
-    "output.db":{
+    "avails.db":{
       "username":"paraccel",
-      "host":"qa-dw-01.jiwiredev.com",
+      "host":"dw-01.jiwiredev.com",
       "type":"paraccel",
       "port":5439,
-      "name":"qa_ds_01"
+      "name":"prod_ds_01"
     },
+  "output.db": {
+    "type": "mysql",
+    "host": "proddb-21.jiwiredev.com",
+    "port": 3306,
+    "name": "pca_scratch",
+    "username": "pca",
+    "password": "1pca1"
+  },
     "cms.db":{
       "username":"jiwire",
       "host":"dbm.jiwiredev.com",
@@ -28,7 +36,7 @@
       "TmpPath":"tmp/",
       "use_salient":"False",
       "localeze_radius":"100",
-      "table_prefix":"ndcd641_aip_v3_mysql_mist_31",
+      "table_prefix":"pca_581_2",
       "user_params":"",
       "month2_end":"2016-07-20",
       "month3_end":"2016-07-20",
@@ -106,12 +114,5 @@
       "schema_name":"pca_scratch",
       "visit_distO":"0.0189393939394",
       "google_places":"True"
-    },
-    "avails.db":{
-      "username":"paraccel",
-      "host":"dw-01.jiwiredev.com",
-      "type":"paraccel",
-      "port":5439,
-      "name":"prod_ds_01"
     }
 }

@@ -89,7 +89,7 @@ runner = MqttJobRunner("rabbitmq.9dev.io", 1883, "pca_mist_sub", "pca_mist_pub")
 
 runSettings = { "workerId": "lblokhin" }
 
-json_path = "/nethome/lblokhin/git/mist_latest/mist/examples/misc/params.json"
+json_path = "/nethome/lblokhin/git/mist_latest/mist/examples/misc/params2.json"
 
 with open(json_path) as parameters_json:
         parameters = json.load(parameters_json)

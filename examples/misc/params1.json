@@ -1,0 +1,73 @@
+{
+  "method": {"name": "Create_Ref_Tables, filter_CA_events_task, filter_IDA_task, filter_events_task, write_new_events, filter_ref_tables, PCA_run_task, output_taskAll" },
+  "avails.db": 
+  {
+    "username": "paraccel", 
+    "host": "dw-01.jiwiredev.com", 
+    "type": "paraccel", 
+    "port": 5439, 
+    "name": "prod_ds_01"
+  },
+  "cms.db": {
+    "username": "jiwire", 
+    "host": "dbm.jiwiredev.com", 
+    "type": "mysql",
+    "port": 3306, 
+    "name": "cms_tool"
+    
+  }, 
+  "output.db": {
+    "type": "mysql",
+    "host": "proddb-21.jiwiredev.com",
+    "port": 3306,
+    "name": "pca_scratch",
+    "username": "pca",
+    "password": "1pca1"
+  },
+  
+  "params": {
+    "advertiser_chain_id": "-1", 
+    "date_end": "2016-10-31", 
+    "month3_start": "2016-08-02", 
+    "sources": " 'ai6010', 'bj', 'lrtb' ", 
+    "month6_start": "2016-05-04", 
+    "RefPath": "ref/", "month1_end": "2016-10-31", "cross_device": "0", 
+    "TmpPath": "tmp/", "use_salient": "False", "localeze_radius": "100", 
+    "table_prefix": "pca_581_1_3", 
+    "user_params": "", "advertiser_id": "1152", "month2_end": "2016-10-31", 
+    "month3_end": "2016-10-31", "localeze_schema": "pca_ref", 
+    "month4_end": "2016-10-31", "delete_tables": "True", 
+    "filterEventsStoreLookup": "False", 
+    "BasePathRef": "/sas/pca/", 
+    "may_be_empty": "True", 
+    "OutFilePath": "maprfs://mapr5/sas/pca/runs/", 
+    "dist_bucket": "0,0.094697,1,2,5,10,15,20,25,50,50000", 
+    "sparkPrefix": "maprfs://mapr5", 
+    "limit_value": "LIMIT 250", "other_views": "[]", "campaign_id": "20309", 
+    "Other_loc_Cir": "0.0568181818182", "jgrs_schema": "pca_ref", "crossdevice_level": "2", 
+    "beacon_id": "('3103_3104', '2300')", "month2_start": "2016-09-01", 
+    "worker_max_timediff": "25", "hours_after_visit": "2", "same_day_visitors": "False", 
+    "max_hours_per_visit": "4", "KeepAllEvents": "False", "minPCARunSize": "0", 
+    "hsdir_schema": "pca_ref", "dist_to_loc": "0.0189393939394", "typical_groupby": "General, Worker, Exposed, Visited, Avail", 
+    "typical_ddl": "general integer, worker integer, exposed integer, visited integer, avail integer, uct bigint, ct bigint, visit_ct bigint, gen_ct bigint, imps bigint, clicks bigint", 
+    "RefPathOut": "maprfs://mapr5/sas/pca/ref/", "force_drop": "False", "competitor_chains": "-1", 
+    "partition_factor": "50", 
+    "CAminds": "2016-10-01", "ad_ids": "0", 
+    "output_types": "H", 
+    "audience_filter": "exposed=1", 
+    "typical_select": "General, Worker, Exposed, Visited, Avail, sum(uct) as uct, sum(ct) as ct, sum(visit_ct) as visit_ct, sum(gen_ct) as gen_ct, sum(imps) as imps, sum(clicks) as clicks", 
+    "use_campaign_ct": "0", "use_random_prefix": "False", "date1_end": "2016-10-31", "hsa_schema": "pca_ref", 
+    "dateslist": "[('2016-10-07', '2016-10-12'), ('2016-10-13', '2016-10-18'), ('2016-10-19', '2016-10-24'), ('2016-10-25', '2016-10-30'), ('2016-10-31', '2016-10-31')]", 
+    "working_hours": "7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24", "location_list_id": "10289", 
+    "number_of_permitted_visits_per_week": "8", "month4_start": "2016-07-03", "enabled_flags": "0", "report_name": "Fix PCA-488 (clone 50188)", 
+    "reports_schema": "pca_ref", "target_email": "['lblokhin@ninthdecimal.com']", "month1_start": "2016-10-01", "hours_prior_to_visit": "2", 
+    "BasePath": "/sas/pca/", "output_filename": "Fix PCA-488.xls", "date1_start": "2016-10-01", "CAmaxds": "2016-10-31", "blacklists_schema": "pca_ref", 
+    "lci_pixel_schema": "pca_ref", "visit_dist": "0.0251515151515", "working_days": "0, 1, 2, 3, 4, 5, 6", "limit_statement": "", "dbtype": "pca_scratch", 
+    "date_start": "2016-10-01", "month6_end": "2016-10-31", 
+    "locations_table": "pca_ref.pca_581", 
+    "tempdir": "/sas/pca/tmp/", 
+    "before_hours": "2", "nod_histogram_length": "30", "after_hours": "2", "custom_id": "", "maxPCARunSize": "45000", "general_dist": "0.113636363636", 
+    "RunPath": "runs/", "schema_name": "pca_ref", "visit_distO": "0.0189393939394", "google_places": "True"}
+    
+  
+}
