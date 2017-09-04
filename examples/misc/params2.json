@@ -60,7 +60,7 @@
 		"month6_start": "2017-01-01",
 		"blacklists_schema": "pca_ref",
 		"month3_start": "2017-04-01",
-		"OutFilePath": "maprfs://mapr5/sas/pca/runs/",
+		"OutFilePath": "maprfs://mapr5/sas/pca/runs/pca_581_2_1",
 		"filters": "[]",
 		"dist_bucket": "0,0.094697,1,2,5,10,15,20,25,50,50000",
 		"month3_end": "2017-06-30",

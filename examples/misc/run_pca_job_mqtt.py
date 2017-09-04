@@ -89,10 +89,26 @@ runner = MqttJobRunner("rabbitmq.9dev.io", 1883, "pca_mist_sub", "pca_mist_pub")
 
 runSettings = { "workerId": "lblokhin" }
 
-json_path = "/nethome/lblokhin/git/mist_latest/mist/examples/misc/params2.json"
+json_path = "/nethome/lblokhin/git/mist_latest/mist/examples/misc/aip_tiffany_filters_off.json"
+
 
 with open(json_path) as parameters_json:
         parameters = json.load(parameters_json)
-        result = runner.runJob("pca-default", { "parameters": parameters }, runSettings)
-
-print("Job result is:" + json.dumps(result))
+        methods = (parameters['parameters']['method']['name']).split(",")
+        method_to_endpoint = {
+            'Create_Ref_Tables': 'pca-create-ref-tables',
+            'filter_IDA_task': 'pca-filter-ida-task',
+            'filter_CA_events_task': 'pca-filter-ca-event-task',
+            'filter_events_task': 'pca-filter-events-task',
+            'write_new_events': 'pca-write-new-events',
+            'filter_ref_tables': 'pca-filter-ref-tables',
+            'PCA_run_task': 'pca-run-task',
+            'output_taskAll': 'pca-output-task',
+            'EventLogTracking': 'pca-event-log-tracking',
+            'TestParaccel': 'pca-test-paraccel'
+        }
+        for method in methods:
+            print("Start method: %s on endpoint %s" % (method, method_to_endpoint[method]))
+            parameters['parameters']['method']['name'] = method
+            result = runner.runJob(method_to_endpoint[method], { "parameters": parameters }, runSettings)
+            print("Job result is:" + json.dumps(result))
