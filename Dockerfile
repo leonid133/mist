@@ -37,6 +37,9 @@ RUN cd ${MIST_HOME} && \
 
 COPY ./spark/conf ${SPARK_HOME}/conf
 
-EXPOSE 2003
+ARG PCA_PYTHON_VER
+RUN pip install --trusted-host pypi.jiwiredev.com --extra-index-url http://pypi.jiwiredev.com/simple/ http://pypi.jiwiredev.com/packages/jiwire-reports-$PCA_PYTHON_VER.tar.gz
+
+EXPOSE 2004
 
 ENTRYPOINT ["/docker-entrypoint.sh"]

@@ -1,7 +1,7 @@
 {
-	"parameters": {
+
 		"method": {
-			"name": "Create_Ref_Tables, filter_CA_events_task, filter_IDA_task, filter_events_task, write_new_events, filter_ref_tables, PCA_run_task, output_taskAll"
+			"name": "Create_Ref_Tables,filter_CA_events_task,filter_IDA_task,filter_events_task,write_new_events,filter_ref_tables,PCA_run_task,output_taskAll"
 		},
 		"params": {
 			"table_prefix": "aip_tiffany_filters_off_copy12",
@@ -117,5 +117,5 @@
 			"port": 3306,
 			"type": "mysql"
 		}
-	}
+
 }

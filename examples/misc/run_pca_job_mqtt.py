@@ -32,7 +32,7 @@ class MqttJobRunner:
                 elif event == "failed":
                     self.success = False
                     self.finished = True
-                    self.error = data
+                    self.result = data
                 elif event == "canceled":
                     self.success = False
                     self.finished = True
@@ -94,7 +94,7 @@ json_path = "/nethome/lblokhin/git/mist_latest/mist/examples/misc/aip_tiffany_fi
 
 with open(json_path) as parameters_json:
         parameters = json.load(parameters_json)
-        methods = (parameters['parameters']['method']['name']).split(",")
+        methods = (parameters['method']['name']).split(",")
         method_to_endpoint = {
             'Create_Ref_Tables': 'pca-create-ref-tables',
             'filter_IDA_task': 'pca-filter-ida-task',
@@ -109,6 +109,6 @@ with open(json_path) as parameters_json:
         }
         for method in methods:
             print("Start method: %s on endpoint %s" % (method, method_to_endpoint[method]))
-            parameters['parameters']['method']['name'] = method
+            parameters['method']['name'] = method
             result = runner.runJob(method_to_endpoint[method], { "parameters": parameters }, runSettings)
             print("Job result is:" + json.dumps(result))
